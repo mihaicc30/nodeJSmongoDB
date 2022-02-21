@@ -1,0 +1,21 @@
+https://docs.mongodb.com/manual/crud/
+
+show collections
+show users
+show databases
+
+use `db_name`
+drop
+
+
+///////////// fixing errors #1
+FullyQualifiedErrorId : UnauthorizedAccess.
+/////////////
+powershell > open as admin >
+Select Start > All Programs > Windows PowerShell version > Windows PowerShell.
+Type Set-ExecutionPolicy RemoteSigned to set the policy to RemoteSigned.
+Type Set-ExecutionPolicy Unrestricted to set the policy to Unrestricted.
+Type Get-ExecutionPolicy to verify the current settings for the execution policy.
+Type Exit.
+////////////////
+////////////////
