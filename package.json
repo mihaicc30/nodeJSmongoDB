@@ -14,7 +14,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/mihaicc30/oop_project.git"
+    "url": "git+https://github.com/mihaicc30/nodeJSmongoDB.git"
   },
   "keywords": [
     "nodeJS+mongoDB"
@@ -22,7 +22,7 @@
   "author": "Mihai Culea",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/mihaicc30/oop_project/issues"
+    "url": "https://github.com/mihaicc30/nodeJSmongoDB"
   },
-  "homepage": "https://github.com/mihaicc30/oop_project#readme"
+  "homepage": "https://github.com/mihaicc30/nodeJSmongoDB"
 }
