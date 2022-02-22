@@ -3,7 +3,7 @@ const SERVER_NAME = '\x1b[34m[Mihai-Server]\x1b[0m';
 const PORT = 8080;  // for some reason if this port is not available and server is not starting, it can be changed from here as it is a global variable 
 
 const MongoClient = require('mongodb').MongoClient;
-const urlDB = "mongodb://localhost:27017/mongoDBmihai";
+const urlDB = "mongodb+srv://alemihai25:<password>@mihai.ch81p.mongodb.net/test";
 const http = require('http');
 const express = require('express');     // 1/2 required to get the server
 const app = express();                  //  2/2
@@ -13,20 +13,20 @@ const app = express();                  //  2/2
 //|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?//
 var DBresults = undefined;
 
-MongoClient.connect(urlDB, function(err, db) {
-  if (err) throw err;
-  var dbo = db.db("mongoDBmihai");
-  var mysort = { name: 1 }; // or -1 for decending
-  dbo.collection("customers").find().toArray(function(err, result) {
-    if (err) throw err;
-    // console.log(result);
-    DBresults = result;
-    db.close();
-    // console.log("aAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
-    // console.log(result[0]["name"]);
-    // console.log("bBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB");
-  });
-});
+// MongoClient.connect(urlDB, function(err, db) {
+//   if (err) throw err;
+//   var dbo = db.db("mongoDBmihai");
+//   var mysort = { name: 1 }; // or -1 for decending
+//   dbo.collection("customers").find().toArray(function(err, result) {
+//     if (err) throw err;
+//     // console.log(result);
+//     DBresults = result;
+//     db.close();
+//     // console.log("aAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
+//     // console.log(result[0]["name"]);
+//     // console.log("bBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB");
+//   });
+// });
 
 
 //|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?//
