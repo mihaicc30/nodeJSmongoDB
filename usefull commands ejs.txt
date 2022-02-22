@@ -1,0 +1,2 @@
+To echo a single variable, you can use <%= tagline %>.
+

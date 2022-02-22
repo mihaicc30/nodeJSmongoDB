@@ -1,22 +1,72 @@
-var MongoClient = require('mongodb').MongoClient;
-var url = "mongodb://localhost:27017/mongoDBmihai";
-var http = require('http');
+const SERVER_NAME = '\x1b[34m[Mihai-Server]\x1b[0m';
+// const err = console.log("DB conn \x1b[31mfailed!\x1b[0m");  // ill use later
+const PORT = 8080;  // for some reason if this port is not available and server is not starting, it can be changed from here as it is a global variable 
+
+const MongoClient = require('mongodb').MongoClient;
+const urlDB = "mongodb://localhost:27017/mongoDBmihai";
+const http = require('http');
+const express = require('express');     // 1/2 required to get the server
+const app = express();                  //  2/2
+
+//|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?//
+//|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|   danger - testing grounds     LOL ?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?//
+//|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?//
+var DBresults = undefined;
+
+MongoClient.connect(urlDB, function(err, db) {
+  if (err) throw err;
+  var dbo = db.db("mongoDBmihai");
+  var mysort = { name: 1 }; // or -1 for decending
+  dbo.collection("customers").find().toArray(function(err, result) {
+    if (err) throw err;
+    // console.log(result);
+    DBresults = result;
+    db.close();
+    // console.log("aAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
+    // console.log(result[0]["name"]);
+    // console.log("bBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB");
+  });
+});
 
 
+//|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?//
+//|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?   danger - testing grounds     LOL ?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?//
+//|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?//
 
 
+// use res.render to load up an ejs view file //
+// index page
+app.get('/', function(req, res) {
+  var mascots = DBresults;
+  // var mascots = [
+  //   { name: 'Sammy', organization: "DigitalOcean", birth_year: 2012},
+  //   { name: 'Tux', organization: "Linux", birth_year: 1996},
+  //   { name: 'Moby Dock', organization: "Docker", birth_year: 2013}
+  // ];
+  var tagline = "No programming concept is complete without a cute animal mascot.";
+  console.log("Rendering ``index.ejs``");
+  res.render('pages/index.ejs', {
+    mascots: mascots,
+    tagline: tagline
+  });
+});
+// about page
+app.get('/about', function(req, res) {
+  console.log("Rendering ``about.ejs``");
+  res.render('pages/about.ejs');
+});
 
-MongoClient.connect(url, function(err, db) {
+
+app.set('view engine', 'ejs'); // set the view engine to ejs
+
+
+MongoClient.connect(urlDB, function(err, db) {
     if (err) throw err;
     var dbo = db.db("mongoDBmihai");
-    console.log("DB conn successful!");
+    console.log("DB conn \x1b[32msuccessful!\x1b[0m");
     db.close();
-  });
+});
 
-
-http.createServer(function (req, res) {
-  res.writeHead(200, {'Content-Type': 'text/html'});
-  console.log("Website live");
-  res.end('Hello World! i am node js :3');
-}).listen(8080);
-
+console.log();
+app.listen(PORT);
+console.log(SERVER_NAME+'is listening on port \x1b[32m'+PORT+'\x1b[0m.');

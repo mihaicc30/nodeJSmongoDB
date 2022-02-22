@@ -1,12 +1,13 @@
 https://docs.mongodb.com/manual/crud/
 
+mongosh
 show collections
 show users
 show databases
 
 use `db_name`
 drop
-
+exit
 
 ///////////// fixing errors #1
 FullyQualifiedErrorId : UnauthorizedAccess.
@@ -19,3 +20,10 @@ Type Get-ExecutionPolicy to verify the current settings for the execution policy
 Type Exit.
 ////////////////
 ////////////////
+
+
+// nodemon usefull cmds  //
+nodemon --inspect ./app.js 80
+nodemon ./app.js localhost 8080
+rs          // cmd to reset
+ctrl+c      // cmd to exit/quit
