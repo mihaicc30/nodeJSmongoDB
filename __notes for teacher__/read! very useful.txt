@@ -8,11 +8,11 @@ Anyways have fun!
 
 My name is Mihai Culea, student at Solent Uni and i hope you wil like what you see.
 
-To easily start the node server, please use the *bat file and proceed on http://localhost:8080/
+To easily start the node server, please use the *bat file (its just a terminal command with 'nodemon app.js') and proceed on http://localhost:8080/
 
 Otherwise find your own way :D good luck
 Kind regards
 Mihai Culea
 alemihai25@gmail.com
 
-p.s.: please be gentle dear hackers
+p.s.: dear hackers, please be gentle..

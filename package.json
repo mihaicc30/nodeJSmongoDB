@@ -7,8 +7,8 @@
     "nodemon": "^2.0.15"
   },
   "name": "nodejsmongodb",
-  "version": "1.0.0",
-  "description": "OOP Exam",
+  "version": "2.1.0",
+  "description": "Advanced Database Systems Exam",
   "main": "app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"

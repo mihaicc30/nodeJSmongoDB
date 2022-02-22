@@ -1,9 +1,9 @@
+// constants
 const SERVER_NAME = '\x1b[34m[Mihai-Server]\x1b[0m';
 // const err = console.log("DB conn \x1b[31mfailed!\x1b[0m");  // ill use later
 const PORT = 8080;  // for some reason if this port is not available and server is not starting, it can be changed from here as it is a global variable 
-
 const MongoClient = require('mongodb').MongoClient;
-const urlDB = "mongodb+srv://alemihai25:<password>@mihai.ch81p.mongodb.net/test";
+const urlDB = "mongodb+srv://mihaiapp:MyDBpassMihai123@mihai.ch81p.mongodb.net/mydb?retryWrites=true&w=majority";
 const http = require('http');
 const express = require('express');     // 1/2 required to get the server
 const app = express();                  //  2/2
@@ -13,46 +13,34 @@ const app = express();                  //  2/2
 //|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?//
 var DBresults = undefined;
 
-// MongoClient.connect(urlDB, function(err, db) {
-//   if (err) throw err;
-//   var dbo = db.db("mongoDBmihai");
-//   var mysort = { name: 1 }; // or -1 for decending
-//   dbo.collection("customers").find().toArray(function(err, result) {
-//     if (err) throw err;
-//     // console.log(result);
-//     DBresults = result;
-//     db.close();
-//     // console.log("aAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
-//     // console.log(result[0]["name"]);
-//     // console.log("bBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB");
-//   });
-// });
-
-
+MongoClient.connect(urlDB, function(err, db) {
+  if (err) throw err;
+  var dbo = db.db("mydb");
+  dbo.collection("users").find().toArray(function(err, result) {
+    if (err) throw err;
+    DBresults = result;
+    db.close();
+  });
+});
 //|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?//
 //|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?   danger - testing grounds     LOL ?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?//
 //|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?//
 
 
 // use res.render to load up an ejs view file //
-// index page
-app.get('/', function(req, res) {
+// data page
+app.get('/data', function(req, res) {
   var mascots = DBresults;
-  // var mascots = [
-  //   { name: 'Sammy', organization: "DigitalOcean", birth_year: 2012},
-  //   { name: 'Tux', organization: "Linux", birth_year: 1996},
-  //   { name: 'Moby Dock', organization: "Docker", birth_year: 2013}
-  // ];
-  var tagline = "No programming concept is complete without a cute animal mascot.";
-  console.log("Rendering ``index.ejs``");
-  res.render('pages/index.ejs', {
+  var tagline = "No programming concept is complete without a cute animal mascot.";  // local variable
+  console.log("Rendering \x1b[34m[data.ejs]\x1b[0m");
+  res.render('pages/data.ejs', {
     mascots: mascots,
     tagline: tagline
   });
 });
 // about page
 app.get('/about', function(req, res) {
-  console.log("Rendering ``about.ejs``");
+  console.log("Rendering \x1b[34m[about.ejs]\x1b[0m");
   res.render('pages/about.ejs');
 });
 
@@ -62,7 +50,7 @@ app.set('view engine', 'ejs'); // set the view engine to ejs
 
 MongoClient.connect(urlDB, function(err, db) {
     if (err) throw err;
-    var dbo = db.db("mongoDBmihai");
+    var dbo = db.db("mydb");
     console.log("DB conn \x1b[32msuccessful!\x1b[0m");
     db.close();
 });
