@@ -55,7 +55,6 @@ app.post('/register', async (req, res) => {
   } catch {
     res.redirect('/register')
   }
-  // console.log(users);
 });
 
 // login page
