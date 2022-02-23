@@ -6,3 +6,5 @@ mongodb
 nodeJS
 
 EJS View Engine
+bcrypt
+express
