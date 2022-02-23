@@ -3,9 +3,13 @@
     "bcrypt": "^5.0.1",
     "ejs": "^3.1.6",
     "express": "^4.17.3",
+    "express-flash": "^0.0.2",
+    "express-session": "^1.17.2",
     "mongodb": "^4.4.0",
     "nodejs": "^0.0.0",
-    "nodemon": "^2.0.15"
+    "nodemon": "^2.0.15",
+    "passport": "^0.5.2",
+    "passport-local": "^1.0.0"
   },
   "name": "nodejsmongodb",
   "version": "2.1.0",

@@ -1,19 +1,27 @@
-const dotenv = require('dotenv');
-dotenv.config();
-// constants
-const SERVER_NAME = '\x1b[34m[Mihai-Server]\x1b[0m';
+if ( process.env.NODE_ENV !== 'production' ) {
+  console.log("production mode activated")
+  const dotenv = require('dotenv').config()
+}
 // const err = console.log("DB conn \x1b[31mfailed!\x1b[0m");  // ill use later
-const MongoClient = require('mongodb').MongoClient;
-const URLDB = process.env.URLDB;
-// const http = require('http');
-const express = require('express');     // 1/2 required to get the server
-const app = express();                  //  2/2
-const bcrypt = require('bcrypt'); // pass encryption
 
+// constants
+const flash = require('express-flash')
+const session = require('express-session')
+const passport = require('passport')
+const bcrypt = require('bcrypt') // pass encryption
+const SERVER_NAME = '\x1b[34m[Mihai-Server]\x1b[0m'
+const MongoClient = require('mongodb').MongoClient
+const URLDB = process.env.URLDB
+const express = require('express')     // 1/2 required to get the server
+const app = express()                  //  2/2
+const initializePassport = require('./passport-config')
+initializePassport(
+  passport, email => users.find(user => user.email === email))
+  // <<<<<<<<<<<<<<--------------------      <<<<<<<<<<<<<<--------------------      <<<<<<<<<<<<<<--------------------      <<<<<<<<<<<<<<--------------------      <<<<<<<<<<<<<<--------------------      <<<<<<<<<<<<<<--------------------      
 //|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?//
 //|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|   danger - testing grounds     LOL ?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?//
 //|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?//
-var DBresults = undefined;
+var DBresults = undefined
 
 MongoClient.connect(URLDB, function(err, db) {
   if (err) throw err;
@@ -30,6 +38,14 @@ MongoClient.connect(URLDB, function(err, db) {
 
 app.set('view engine', 'ejs'); // set the view engine to ejs
 app.use(express.urlencoded({extended: false}));
+app.use(flash())
+app.use(session({
+  secret: process.env.SESSION_SECRET,
+  resave: false,
+  saveUninitializeialized: false
+}))
+app.use(passport.initialize())
+app.use(passport.session())
 
 // use res.render to load up an ejs view file //
 // registrer page
@@ -62,43 +78,51 @@ app.get('/login', (req, res) => {
   console.log("Rendering \x1b[34m[index.ejs]\x1b[0m");
   res.render('pages/login.ejs')
 })
-app.post('/login', async (req, res) => {
-  try {
-    var email2 = req.body.email;
-    var password = req.body.password;
-    // const hashedPassword = await bcrypt.hash(req.body.password, 10);
+app.post('/login', passport.authenticate('local', {
+  successRedirect: '/',
+  failureRedirect: '/login',
+  failureFlash: true
+}))
 
-    console.log(email2);
-    console.log("lookin into the database");
-    var hashedPassword2 = 1;
-    MongoClient.connect(URLDB, function(err, db) {
-      if (err) throw err;
-      var dbo = db.db("mydb");
-      dbo.collection("users").findOne({ email: email2}, function(err, result) {
-        if (err) throw err;
-        db.close();
-        hashedPassword2 = result["password"];
 
-        console.log("COMPARE : ", password, "to", hashedPassword2)
+// app.post('/login', async (req, res) => {
+//   try {
+//     var email2 = req.body.email;
+//     var password = req.body.password;
+//     // const hashedPassword = await bcrypt.hash(req.body.password, 10);
 
-        
-        // const result1 = await bcrypt.compare(password, hashedPassword2);
-        var whatis = bcrypt.compareSync(password, hashedPassword2);
-        if (whatis == true) {
-          console.log("F TRUE")
-          res.redirect('/data');
-        } else {
-          console.log("FALSE")
-          res.redirect('/login');
-        }
-      });
-    });
-  } catch {
-  }
-});
+//     console.log(email2);
+//     console.log("lookin into the database");
+//     var hashedPassword2 = 1;
+//     MongoClient.connect(URLDB, function(err, db) {
+//       if (err) throw err;
+//       var dbo = db.db("mydb");
+//       dbo.collection("users").findOne({ email: email2}, function(err, result) {
+//         if (err) throw err;
+//         db.close();
+//         hashedPassword2 = result["password"];
+//         console.log("COMPARE : ", password, "to", hashedPassword2)
+//         // const result1 = await bcrypt.compare(password, hashedPassword2);
+//         var whatis = bcrypt.compareSync(password, hashedPassword2);
+//         if (whatis == true) {
+//           console.log("F TRUE")
+//           res.redirect('/data');
+//         } else {
+//           console.log("FALSE")
+//           res.redirect('/login');
+//         }
+//       });
+//     });
+//   } catch {
+//   }
+// });
 
 // home page
 app.get('/', (req, res) => {
+  console.log("Rendering \x1b[34m[index.ejs]\x1b[0m");
+  res.render('pages/index.ejs', { name: 'Mihai'})
+})
+app.get('/index', (req, res) => {
   console.log("Rendering \x1b[34m[index.ejs]\x1b[0m");
   res.render('pages/index.ejs', { name: 'Mihai'})
 })
