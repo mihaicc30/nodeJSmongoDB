@@ -1,4 +1,4 @@
-# .gitignore 
+.gitignore 
 .env
 node_modules
 __notes for teacher__
