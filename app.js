@@ -82,25 +82,19 @@ app.post('/login', async (req, res) => {
 
         console.log("COMPARE : ", password, "to", hashedPassword2)
 
-        (async () => {
-          const result1 = await bcrypt.compare(password, hashedPassword2);
-          // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<------------------------------------------------------------------------------------------------------------
-          })();
         
-        // const result1 = bcrypt.compare(password, hashedPassword2, function (err, res) {
-        //   if (res) {
-        //     console.log("YES")
-        //     
-        //   } else {
-        //     console.log("NO")
-        //     
-        //   }
-        // })
+        // const result1 = await bcrypt.compare(password, hashedPassword2);
+        var whatis = bcrypt.compareSync(password, hashedPassword2);
+        if (whatis == true) {
+          console.log("F TRUE")
+          res.redirect('/data');
+        } else {
+          console.log("FALSE")
+          res.redirect('/login');
+        }
       });
     });
-    res.redirect('/data');
   } catch {
-    res.redirect('/about');
   }
 });
 
