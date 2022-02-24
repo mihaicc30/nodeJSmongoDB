@@ -1,10 +1,10 @@
-if ( process.env.NODE_ENV !== 'production' ) {
-  console.log("production mode activated")
-  const dotenv = require('dotenv').config()
+if ( process.env.NODE_ENV !== 'developer' ) {
+  console.log("\x1b[36m--Developer mode activated--\x1b[0m")
+  require('dotenv').config()
 }
 // const err = console.log("DB conn \x1b[31mfailed!\x1b[0m");  // ill use later
 
-// constants
+const methodOverride = require('method-override')
 const flash = require('express-flash')
 const session = require('express-session')
 const passport = require('passport')
@@ -15,8 +15,13 @@ const URLDB = process.env.URLDB
 const express = require('express')     // 1/2 required to get the server
 const app = express()                  //  2/2
 const initializePassport = require('./passport-config')
+// initializePassport(passport, email => users.find(user => user.email === email))
 initializePassport(
-  passport, email => users.find(user => user.email === email))
+  passport,
+  email => users.find(user => user.email === email),
+  id => users.find(user => user.id === id)
+)
+
   // <<<<<<<<<<<<<<--------------------      <<<<<<<<<<<<<<--------------------      <<<<<<<<<<<<<<--------------------      <<<<<<<<<<<<<<--------------------      <<<<<<<<<<<<<<--------------------      <<<<<<<<<<<<<<--------------------      
 //|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?//
 //|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|   danger - testing grounds     LOL ?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?|?//
@@ -42,19 +47,20 @@ app.use(flash())
 app.use(session({
   secret: process.env.SESSION_SECRET,
   resave: false,
-  saveUninitializeialized: false
+  saveUninitialized: false
 }))
 app.use(passport.initialize())
 app.use(passport.session())
+app.use(methodOverride('_method'))
 
 // use res.render to load up an ejs view file //
 // registrer page
-app.get('/register', (req, res) => {
-  console.log("Rendering \x1b[34m[index.ejs]\x1b[0m");
+app.get('/register', checkNotAuthenticated, (req, res) => {
+  console.log("Rendering \x1b[34m[register.ejs]\x1b[0m");
   res.render('pages/register.ejs')
 })
 
-app.post('/register', async (req, res) => {
+app.post('/register', checkNotAuthenticated, async (req, res) => {
   try {
     const hashedPassword = await bcrypt.hash(req.body.password, 10)
     MongoClient.connect( URLDB, function(err, db) {
@@ -74,11 +80,11 @@ app.post('/register', async (req, res) => {
 });
 
 // login page
-app.get('/login', (req, res) => {
-  console.log("Rendering \x1b[34m[index.ejs]\x1b[0m");
+app.get('/login', checkNotAuthenticated, (req, res) => {
+  console.log("Rendering \x1b[34m[login.ejs]\x1b[0m");
   res.render('pages/login.ejs')
 })
-app.post('/login', passport.authenticate('local', {
+app.post('/login', checkNotAuthenticated, passport.authenticate('local', {
   successRedirect: '/',
   failureRedirect: '/login',
   failureFlash: true
@@ -118,17 +124,17 @@ app.post('/login', passport.authenticate('local', {
 // });
 
 // home page
-app.get('/', (req, res) => {
+app.get('/', checkAuthenticated, (req, res) => {
   console.log("Rendering \x1b[34m[index.ejs]\x1b[0m");
-  res.render('pages/index.ejs', { name: 'Mihai'})
+  res.render('pages/index.ejs', { name: req.user.name })
 })
-app.get('/index', (req, res) => {
+app.get('/index', checkAuthenticated, (req, res) => {
   console.log("Rendering \x1b[34m[index.ejs]\x1b[0m");
-  res.render('pages/index.ejs', { name: 'Mihai'})
+  res.render('pages/index.ejs', { name: req.user.name})
 })
 
 // data page
-app.get('/data', function(req, res) {
+app.get('/data', checkAuthenticated, function(req, res) {
   var mascots = DBresults;
   var tagline = "No programming concept is complete without a cute animal mascot.";  // local variable
   console.log("Rendering \x1b[34m[data.ejs]\x1b[0m");
@@ -138,10 +144,30 @@ app.get('/data', function(req, res) {
   });
 });
 // about page
-app.get('/about', function(req, res) {
+app.get('/about', checkAuthenticated, function(req, res) {
   console.log("Rendering \x1b[34m[about.ejs]\x1b[0m");
   res.render('pages/about.ejs');
 });
+
+app.delete('/logout', (req, res) => {
+  req.logOut()
+  res.redirect('/login')
+})
+
+function checkAuthenticated(req, res, next) {
+  if (req.isAuthenticated()) {
+    return next()
+  }
+
+  res.redirect('/login')
+}
+
+function checkNotAuthenticated(req, res, next) {
+  if (req.isAuthenticated()) {
+    return res.redirect('/')
+  }
+  next()
+}
 
 MongoClient.connect(URLDB, function(err, db) {
     if (err) throw err;
